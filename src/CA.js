@@ -60,6 +60,12 @@ const rules = {
       into: LAND,
       operator: operators.gt,
       nNeighbors: 4
+    },
+    {
+      adjacentType: WATER,
+      into: LAND,
+      operator: operators.gt,
+      nNeighbors: 4
     }
   ],
   [ROCK]: [
