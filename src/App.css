@@ -21,3 +21,14 @@
     height: 10px; */
   border: 1px dashed #d8d8d8;
 }
+
+.CA {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.CA button {
+    width: 100px;
+    text-align: center;
+}

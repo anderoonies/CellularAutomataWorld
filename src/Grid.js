@@ -10,19 +10,19 @@ function Cell({ state, key }) {
   let emoji;
   switch (state) {
     case LAND:
-      emoji = "🍀";
+      emoji = String.fromCodePoint("0x1F340");
       break;
     case ROCK:
-      emoji = "⛰";
+      emoji = String.fromCodePoint("0x26F0");
       break;
     case WATER:
-      emoji = "🌊";
+      emoji = String.fromCodePoint("0x1F30A");
       break;
     case SAND:
-      emoji = "🏖";
+      emoji = String.fromCodePoint("0x1F3D6");
       break;
     case FOREST:
-      emoji = "🌲";
+      emoji = String.fromCodePoint("0x1F332");
       break;
   }
 

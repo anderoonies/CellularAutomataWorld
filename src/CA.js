@@ -87,7 +87,7 @@ const rules = {
       adjacentType: WATER,
       into: WATER,
       operator: operators.gt,
-      nNeighbors: 4
+      nNeighbors: 3
     },
     {
       adjacentType: ROCK,
@@ -218,9 +218,32 @@ export default class CA extends Component {
     }
   }
 
-  render() {
-    return Grid({
-      states: this.state.cellStates
+  restart() {
+    let initialCellState = new Array(this.state.height)
+      .fill(0)
+      .map(() => new Array(this.state.width).fill(0));
+    for (let row in [...Array(this.state.height)]) {
+      for (let col in [...Array(this.state.width)]) {
+        initialCellState[row][col] =
+          STATES[Math.floor(Math.random() * STATES.length)];
+      }
+    }
+
+    this.setState({
+      cellStates: initialCellState,
+      lastUpdated: null,
+      ticks: 0
     });
+  }
+
+  render() {
+    return (
+      <div className="CA">
+        {Grid({
+          states: this.state.cellStates
+        })}
+        <button onClick={this.restart.bind(this)}>restart</button>
+      </div>
+    );
   }
 }
