@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Grid from "./Grid";
+import emojify from "./emojify";
 
 // dungeon generated with cellular automata
 
@@ -14,20 +15,35 @@ const N = 2;
 const TICK_SPEED = 500;
 
 const operators = {
-  lt: (a, b) => {
-    return a < b;
+  lt: {
+    fn: (a, b) => {
+      return a < b;
+    },
+    string: "less than"
   },
-  gt: (a, b) => {
-    return a > b;
+  gt: {
+    fn: (a, b) => {
+      return a > b;
+    },
+    string: "greater than"
   },
-  lte: (a, b) => {
-    return a <= b;
+  lte: {
+    fn: (a, b) => {
+      return a <= b;
+    },
+    string: "less than or equal to"
   },
-  gte: (a, b) => {
-    return a >= b;
+  gte: {
+    fn: (a, b) => {
+      return a >= b;
+    },
+    string: "greater than or equal to"
   },
-  eq: (a, b) => {
-    return a === b;
+  eq: {
+    fn: (a, b) => {
+      return a === b;
+    },
+    string: "equal to"
   }
 };
 
@@ -43,9 +59,9 @@ const rules = {
     },
     {
       adjacentType: WATER,
+      into: SAND,
       operator: operators.gte,
-      nNeighbors: 1,
-      into: SAND
+      nNeighbors: 1
     },
     {
       adjacentType: LAND,
@@ -78,9 +94,9 @@ const rules = {
   ],
   [SAND]: [
     {
-      adjacentType: WATER,
-      into: SAND,
-      operator: operators.gt,
+      adjacentType: [ROCK, LAND, FOREST],
+      into: WATER,
+      operator: operators.lt,
       nNeighbors: 1
     },
     {
@@ -88,12 +104,6 @@ const rules = {
       into: LAND,
       operator: operators.eq,
       nNeighbors: 0
-    },
-    {
-      adjacentType: WATER,
-      into: WATER,
-      operator: operators.gt,
-      nNeighbors: 3
     },
     {
       adjacentType: ROCK,
@@ -124,7 +134,7 @@ export default class CA extends Component {
   constructor() {
     super();
 
-    const width = 40;
+    const width = 30;
     const height = 20;
 
     let initialCellState = new Array(height)
@@ -165,11 +175,7 @@ export default class CA extends Component {
         if (x !== row || y !== col) {
           try {
             neighbors.push(this.state.cellStates[x][y]);
-          } catch (e) {
-            // console.log(x);
-            // console.log(y);
-            // console.log(e);
-          }
+          } catch (e) {}
         }
       }
     }
@@ -182,9 +188,13 @@ export default class CA extends Component {
     if (cellRules) {
       cellRules.forEach(({ adjacentType, into, operator, nNeighbors }) => {
         const nNeighborsOfType = neighbors.filter(cellState => {
-          return cellState === adjacentType;
+          if (Array.isArray(adjacentType)) {
+            return adjacentType.indexOf(cellState) > -1;
+          } else {
+            return cellState === adjacentType;
+          }
         }).length;
-        if (operator(nNeighborsOfType, nNeighbors)) {
+        if (operator.fn(nNeighborsOfType, nNeighbors)) {
           newCellState = into;
         }
       });
@@ -248,8 +258,29 @@ export default class CA extends Component {
         {Grid({
           states: this.state.cellStates
         })}
-        <button onClick={this.restart.bind(this)}>restart</button>
+        <div className="rules">
+          Rules:<br />
+          {Object.entries(rules).map(([type, rules]) => {
+            return (
+              <div>
+                If a {emojify(type)} is surrounded by
+                {rules.map(rule => {
+                  return (
+                    <li>
+                      {rule.operator.string} {rule.nNeighbors}{" "}
+                      {emojify(rule.adjacentType)}, it turns into{" "}
+                      {emojify(rule.into)}
+                    </li>
+                  );
+                })}
+              </div>
+            );
+          })}
+          <button onClick={this.restart.bind(this)}>restart</button>
+        </div>
       </div>
     );
   }
 }
+
+export { LAND, ROCK, WATER, SAND, FOREST, STATES };

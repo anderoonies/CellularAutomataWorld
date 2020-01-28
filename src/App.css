@@ -23,12 +23,20 @@
 }
 
 .CA {
-    display: flex;
-    flex-flow: column;
-    align-items: center;
+  display: flex;
+  flex-flow: row;
+  align-items: flex-start;
 }
 
-.CA button {
-    width: 100px;
-    text-align: center;
+.rules {
+  margin-left: 20px;
+  display: flex;
+  font-size: 12px;
+  flex-flow: column;
+}
+
+@media (max-width: 1200px) {
+  .CA {
+    flex-flow: column;
+  }
 }
